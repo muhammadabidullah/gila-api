@@ -1,0 +1,46 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = "postgresql://postgres:postgres@localhost:5432/gila?schema=public"
+}
+
+enum Type {
+  SMS
+  EMAIL
+  NOTIFICATION
+}
+
+enum Category {
+  SPORTS
+  FINANCE
+  MOVIES
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  name     String
+  phone    String
+  logs     LogHistory[]
+  subscribed Category[]
+  types     Type[]
+  createdAt DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime  @updatedAt @db.Timestamptz(3)
+}
+
+model LogHistory {
+  id       Int    @id @default(autoincrement())
+  User     User   @relation(fields: [userId], references: [id])
+  userId   Int
+  message String
+  type   Type
+  category Category
+  createdAt DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime  @updatedAt @db.Timestamptz(3)
+}
